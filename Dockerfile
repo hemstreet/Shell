@@ -1,10 +1,7 @@
 FROM silex/emacs
 MAINTAINER hemstreet
 
-#ADD spacemacs .emacs.d
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod 755 /entrypoint.sh
+ENV TERM xterm-256color
 
-RUN echo 'ln -sf /mnt/.emacs.d $HOME' >> $HOME/.bashrc
-
-CMD ["/bin/bash"]
+# enable this line if we want to not jump directly into emacs, and instead be in a bash prompt
+#CMD ["/bin/bash"]

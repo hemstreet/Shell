@@ -7,13 +7,13 @@
 CONTAINER_NAME?=emacs-hemstreet
 CONTAINER_IMAGE?=hemstreet/emacs
 
-PROJECT_ROOT?=$(shell pwd)
-EMACS_ROOT?=$(PROJECT_ROOT)/.emacs.d
-EMACS_BACKUP?=~/.emacs-backup/$(CONTAINER_NAME)
+PROJECT_DIR?=$(shell pwd)
+EMACS_D_DIR?=$(PROJECT_DIR)/.emacs.d
+EMACS_BACKUP_DIR?=/emacs-backup/$(CONTAINER_NAME)
 
-DOCKER_ROOT?=/mnt/emacs
-DOCKER_EMACS_ROOT?=/mnt/.emacs.d
-DOCKER_EMACS_BACKUP?=/mnt/.emacs.d.backup
+DOCKER_PROJECT_DIR?=/root/development
+DOCKER_EMACS_DIR?=/root/.emacs.d
+DOCKER_EMACS_BACKUP_DIR?=/root/.backup.emacs.d
 
 # ============================================
 # Tasks
@@ -33,15 +33,17 @@ build: ## Build emacs container
 	docker build -t $(CONTAINER_IMAGE) .
 
 start: ## Start a new emacs docker container
-	@echo $(EMACS_ROOT)
-	@echo $(DOCKER_EMACS_ROOT)
 	docker run --rm \
 		-it \
 		--name=${CONTAINER_NAME} \
-		-e "PROJECT_ROOT=$(DOCKER_ROOT)" \
-		-e "EMACS_ROOT=$(DOCKER_EMACS_ROOT)" \
-		-e "EMACS_BACKUP=$(DOCKER_EMACS_BACKUP)" \
-		-v ${PROJECT_ROOT}:${DOCKER_ROOT} \
-	 	-v $(EMACS_ROOT):$(DOCKER_EMACS_ROOT) \
-	 	-v $(EMACS_BACKUP):$(DOCKER_EMACS_BACKUP) \
+		-e "PROJECT_DIR=$(DOCKER_PROJECT_DIR)" \
+		-e "EMACS_D_DIR=$(DOCKER_EMACS_DIR)" \
+		-e "EMACS_BACKUP_DIR=$(DOCKER_EMACS_BACKUP_DIR)" \
+		-v ${PROJECT_DIR}:${DOCKER_PROJECT_DIR} \
+	 	-v $(EMACS_D_DIR):$(DOCKER_EMACS_DIR) \
+	 	-v $(EMACS_BACKUP_DIR):$(DOCKER_EMACS_BACKUP_DIR) \
 	 	$(CONTAINER_IMAGE)
+
+startFresh: # will build and run new version
+	$(MAKE) build
+	$(MAKE) start
