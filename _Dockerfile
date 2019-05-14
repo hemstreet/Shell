@@ -1,0 +1,36 @@
+FROM ubuntu:latest
+MAINTAINER hemstreet
+
+RUN apt-get install netselect-apt
+
+#RUN apt-get update -y \
+#	&& apt-get install -y wget \
+#	&& wget -O netselect.deb http://http.us.debian.org/debian/pool/main/n/netselect/netselect_0.3.ds1-28+b1_`dpkg --print-architecture`.deb \
+#	&& dpkg -i netselect.deb \
+#	&& rm netselect.deb \
+#	&& sed -r -i -e "s#http://(archive|security)\.ubuntu\.com/ubuntu/?#$(netselect -v -s1 -t20 `wget -q -O- https://launchpad.net/ubuntu/+archivemirrors | grep -P -B8 "statusUP|statusSIX" | grep -o -P "http://[^\"]*"`|grep -P -o 'http://.+$')#g" /etc/apt/sources.list
+#
+
+#RUN apt-get update && \
+#    apt-get install -y \
+#        emacs \
+#        # Extras
+#        firefox \
+#        # cleanup when we are done
+#    && rm -rf /var/lib/apt/lists/*
+
+#ADD spacemacs .emacs.d
+#RUN cp -r .emacs.d $HOME
+
+# Replace 1000 with your user / group id
+RUN export uid=1000 gid=1000 && \
+    mkdir -p /home/developer && \
+    echo "developer:x:${uid}:${gid}:Developer,,,:/home/developer:/bin/bash" >> /etc/passwd && \
+    echo "developer:x:${uid}:" >> /etc/group && \
+    echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developer && \
+    chmod 0440 /etc/sudoers.d/developer && \
+    chown ${uid}:${gid} -R /home/developer
+
+USER developer
+ENV HOME /home/developer
+CMD /usr/bin/firefox
