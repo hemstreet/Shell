@@ -4,8 +4,8 @@
 # Setup
 # ============================================
 
-CONTAINER_NAME?=emacs-hemstreet
-CONTAINER_IMAGE?=hemstreet/emacs
+CONTAINER_NAME?=hemstreet-emacsalpine
+CONTAINER_IMAGE?=hemstreet/emacsalpine
 
 PROJECT_DIR?=$(shell pwd)
 EMACS_D_DIR?=$(PROJECT_DIR)/.emacs.d
@@ -47,3 +47,9 @@ start: ## Start a new emacs docker container
 startFresh: # will build and run new version
 	$(MAKE) build
 	$(MAKE) start
+
+clean: # cleans stray files if they have not been cleaned up
+	## delete the auto save list
+	rm -rf .emacs.d/auto-save-list
+	## Delete shell history
+	rm -rf .emacs.d/eshell
